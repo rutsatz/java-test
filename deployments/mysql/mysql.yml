@@ -1,0 +1,118 @@
+---
+# Abaixo eu crio o deployment, mas o deployment é somente o controlador. Eu ainda preciso
+# criar um serviço para expor a aplicação.
+apiVersion: v1
+kind: Service
+# Estou passando o nome de database. Mas lá embaixo, ele vai selecionar todos os pods do mysql.
+metadata:
+  name: database
+  labels:
+    app: database
+spec:
+  ports:
+    - port: 3306
+  # Seleciono o app mysql
+  selector:
+    app: mysql
+  clusterIP: None
+
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  # Informo o tamanho do disco. Nesse caso, 5GB.
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+
+
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+spec:
+  # Digo o tipo de volume que vou querer.
+  # Cada provider tem o seu, então tem que olhar na documentação
+  # https://kubernetes.io/docs/concepts/storage/volumes/#local
+  storageClassName: manual
+  # Digo que quero ter acesso de leitura e escrita nesse volume.
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+
+---
+apiVersion: apps/v1
+# Deployment é um controlador.
+kind: Deployment
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+# Digo quais labels ele deve gerenciar.
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  # Esse strategy é relacionado a atualização. O Recreate ele basicamente mata o pod
+  # que está ativo e cria um novo.
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - image: mysql:5.7
+          name: mysql
+          env:
+            # Variável que vai ser informada para o container do mysql
+            - name: MYSQL_ROOT_PASSWORD
+              # Busca a senha lá do secrets do kubernetes
+              valueFrom:
+                secretKeyRef:
+                  # O nome do segredo que ele vai procurar
+                  name: mysql-pass
+                  # A chave do segredo que contém o valor lá dentro do secret
+                  key: password
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-user-pass
+                  key: password
+            # Nesse caso, posso passar os valores diretamente
+            - name: MYSQL_DATABASE
+              value: javatest
+            - name: MYSQL_USER
+              value: javatest
+          ports:
+            # A porta que o container vai escutar
+            - containerPort: 3306
+              # O nome da porta
+              name: mysql
+          # Cria o volume que vai conter os dados salvos no host
+          volumeMounts:
+            - name: mysql-persistent-storage
+              # Onde vou montar o volume dentro do container
+              mountPath: /var/lib/mysql
+      # Quando trabalho com um cloud provider, não preciso criar o volume manualmente.
+      # O próprio kubernetes se integra com o provider e já cria isso.
+      volumes:
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            # Declaro que tipo de volume quero associar ao deployment
+            claimName: mysql-pv-claim
