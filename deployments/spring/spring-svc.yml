@@ -1,0 +1,18 @@
+---
+# Abaixo eu crio o deployment, mas o deployment é somente o controlador. Eu ainda preciso
+# criar um serviço para expor a aplicação.
+apiVersion: v1
+kind: Service
+# Estou passando o nome de database. Mas lá embaixo, ele vai selecionar todos os pods do mysql.
+metadata:
+  name: spring-svc
+  labels:
+    app: spring-svc
+spec:
+  ports:
+    # Se eu não especifico a porta de destino no container, ele entende que é a mesma porta
+    # que a porta de origem.
+    - port: 8080
+  # Seleciono o app do spring
+  selector:
+    app: backend

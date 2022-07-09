@@ -1,0 +1,26 @@
+---
+apiVersion: apps/v1
+# Deployment é um controlador.
+kind: Deployment
+metadata:
+  name: spring-app
+  labels:
+    app: backend
+# Digo quais labels ele deve gerenciar.
+spec:
+  replicas: 2
+  # Digo que vai gerenciar todos os pods que tem o label app=backend
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: rutsatz/javatest:beta3
+          ports:
+            # A porta que o container vai escutar
+            - containerPort: 8080

@@ -3,7 +3,7 @@ FROM eclipse-temurin:17.0.3_7-jdk-alpine as builder
 WORKDIR /src
 COPY . .
 
-RUN ./gradlew clean build
+RUN ./gradlew clean build -x test
 
 FROM eclipse-temurin:17.0.3_7-jre-alpine
 
