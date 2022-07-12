@@ -1,0 +1,29 @@
+---
+apiVersion: cert-manager.io/v1
+# ClusterIssuer permite emiter certificados para todo o cluster.
+kind: ClusterIssuer
+metadata:
+  # Posso dar um nome para ele, como dev, prod, qa, etc.
+  name: letsencrypt-staging
+  # Se fosse somente um Issuer, teriamos que associar um namespace. Como é um ClusterIssuer,
+  # nesse caso não faz diferença.
+  namespace: ingress-basic
+spec:
+  # Quero criar um emissor baseado no ACME (letsencrypt)
+  acme:
+    # You must replace this email address with your own.
+    # Let's Encrypt will use this to contact you about expiring
+    # certificates, and issues related to your account.
+    email: rutsatz@hotmail.com.br
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      # Secret resource that will be used to store the account's private key.
+      name: letsencrypt-staging
+    # Add a single challenge solver, HTTP01 using nginx
+    solvers:
+      # Como ele vai resolver os certificados? Poderia ser DNS ou HTTP. Geralmente se usa HTTP.
+      # Ele vai verificar se tem algum apontamento para o site, e se tiver, ele vai gerar o certificado.
+      #
+      - http01:
+          ingress:
+            class: nginx
