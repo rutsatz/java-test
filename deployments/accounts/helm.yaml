@@ -1,0 +1,24 @@
+---
+apiVersion: v1
+# Crio uma conta administrativa para o helm poder gerenciar e instalar nossos aplicativos.
+kind: ServiceAccount
+metadata:
+  # O nome dessa conta é tiller
+  name: tiller
+  # Eu coloco ele no mesmo namespace dos outros serviços administrativos do kubernetes.
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tiller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  # Dou permissão de admin para a conta
+  name: cluster-admin
+subjects:
+  # Associo com a minha conta tiller que criei acima.
+  - kind: ServiceAccount
+    name: tiller
+    namespace: kube-system
