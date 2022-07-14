@@ -1,7 +1,5 @@
 FROM eclipse-temurin:17.0.3_7-jdk-alpine as builder
 
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-
 WORKDIR /src
 COPY . .
 
@@ -9,7 +7,9 @@ RUN ./gradlew clean build -x test
 
 FROM eclipse-temurin:17.0.3_7-jre-alpine
 
-COPY --from=builder docker-entrypoint.sh /docker-entrypoint.sh
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY docker-compose.yml /docker-compose.yml
+
 COPY --from=builder src/build/libs/test*T.jar app.jar
 
 RUN apk add --no-cache openssl
