@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'echo Hello'
+                sh 'docker build -t rutsatz/javatest:$BUILD_NUMBER .'
             }
             post {
                 failure {
