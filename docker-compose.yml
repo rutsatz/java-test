@@ -1,0 +1,29 @@
+version: '3'
+services:
+  database:
+    image: mysql:5.7
+    container_name: database
+    ports:
+      - 3306:3306
+    environment:
+      - "MYSQL_DATABASE=javatest"
+      - "MYSQL_USER=javatest"
+      - "MYSQL_PASSWORD=M2c5UFc5VW0zWTVxaUVu"
+      - "MYSQL_ROOT_PASSWORD=M2c5UFc5VW0zWTVxaUVu"
+    networks:
+      - test
+
+  #  The Application
+  app:
+    image: rutsatz/javatest:beta18
+    container_name: app
+    entrypoint: dockerize -wait tcp://database:3306 -timeout 20s /docker-entrypoint.sh
+    ports:
+      - 8080:8080
+    networks:
+      - test
+    depends_on:
+      - database
+networks:
+  test:
+    driver: bridge
