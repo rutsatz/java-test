@@ -17,7 +17,7 @@ pipeline {
                 sh "sed -i 's/rutsatz\\/javatest.*/rutsatz\\/javatest:$BUILD_NUMBER/g' docker-compose.yml"
                 sh "docker compose up -d"
 //                 sh "docker exec app ./gradlew test"
-                sh "docker-compose down"
+                sh "docker compose down"
             }
 
 //             post {
