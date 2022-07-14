@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-loadbalancer
+spec:
+  # Jeito preferido para expor as aplicações em produção.
+  # Ele tenta se integrar ao provedor onde ele está rodando
+  # para tentar criar esse dispositivo de load balancer.
+  type: LoadBalancer
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  # Como eu não tenho nenhum dispositivo de Load balancer instalado, eu posso
+  # informar para o kubernetes com qual IP ele deve trabalhar.
+  externalIPs:
+    - 104.248.108.139
+    - 143.198.184.58
+
+# kubectl apply -f deployments/spring/load-balancer.yml
+# kubectl get services
