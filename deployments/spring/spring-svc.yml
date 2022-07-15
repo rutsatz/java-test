@@ -6,6 +6,8 @@ kind: Service
 # Estou passando o nome de database. Mas lá embaixo, ele vai selecionar todos os pods do mysql.
 metadata:
   name: spring-svc
+  # Posso especificar um namespace
+#  namespace: develop
   labels:
     app: spring-svc
 spec:
