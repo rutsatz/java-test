@@ -24,4 +24,4 @@ EXPOSE 8080
 
 RUN chmod +x /docker-entrypoint.sh
 # CMD ["java", "-jar", "app.jar"]
-CMD ["docker-entrypoint.sh"]
+CMD ["/docker-entrypoint.sh"]
