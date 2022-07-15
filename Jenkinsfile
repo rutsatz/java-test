@@ -25,7 +25,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh "sed -i 's/rutsatz\\/javatest.*/rutsatz\\/javatest:${params.version}/g' docker-compose.yml"
+                sh "sed -i \"s/rutsatz\\/javatest.*/rutsatz\\/javatest:${params.version}/g\" docker-compose.yml"
                 sh "docker compose up -d"
                 sh "docker compose down"
             }
