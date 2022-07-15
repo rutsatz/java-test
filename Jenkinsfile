@@ -39,8 +39,19 @@ pipeline {
                 }
             }
         }
-        stage('Deploy'){
-            steps{
+        stage('Deploy to Dev') {
+            when { expression {params.branch == 'dev'}}
+            steps {
+                sh "kubectl set image deployment/spring-app backend=rutsatz/javatest:${params.version}"
+            }
+        }
+        stage('Deploy to Prod') {
+            when { expression {params.branch == 'prod'}}
+            input {
+                message "Deploy to prod?"
+                ok "Submit"
+            }
+            steps {
                 sh "kubectl set image deployment/spring-app backend=rutsatz/javatest:${params.version}"
             }
         }
