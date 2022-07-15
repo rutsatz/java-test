@@ -12,7 +12,7 @@ pipeline {
             choices: 'main',
             description: 'Branch')
         string(name: 'version',
-            defaultValue: '${env.BUILD_NUMBER}',
+            defaultValue: "${env.BUILD_NUMBER}",
             description: 'Version')
     }
     stages {
@@ -41,7 +41,7 @@ pipeline {
         }
         stage('Deploy'){
             steps{
-                sh 'kubectl set image deployment/spring-app backend=rutsatz/javatest:${params.version}'
+                sh "kubectl set image deployment/spring-app backend=rutsatz/javatest:${params.version}"
             }
         }
 
