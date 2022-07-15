@@ -12,7 +12,7 @@ pipeline {
             choices: 'main',
             description: 'Branch')
         string(name: 'version',
-            defaultValue: "0.${env.BUILD_NUMBER}",
+            defaultValue: "0.${env.BUILD_NUMBER}.rc",
             description: 'Version')
     }
     stages {
