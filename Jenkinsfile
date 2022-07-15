@@ -11,7 +11,7 @@ pipeline {
         choice(name: 'branch',
             choices: 'main',
             description: 'Branch')
-        choice(name: 'version',
+        string(name: 'version',
             defaultValue: '',
             description: 'Version')
     }
