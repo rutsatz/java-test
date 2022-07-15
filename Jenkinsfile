@@ -12,7 +12,7 @@ pipeline {
             choices: 'main',
             description: 'Branch')
         string(name: 'version',
-            defaultValue: "${env.BUILD_NUMBER}",
+            defaultValue: "0.${env.BUILD_NUMBER}",
             description: 'Version')
     }
     stages {
@@ -59,15 +59,18 @@ pipeline {
             steps {
                 sh "kubectl set image deployment/spring-app backend=rutsatz/javatest:${params.version}"
             }
+            post {
+                success {
+                    emailext subject: "Job '${env.JOB_NAME}' '${env.BUILD_NUMBER }' ",
+                        body: "<p>Build deployed to prod at '${env.BUILD_URL}'</p>",
+                        to: 'rafa.rutsatz@gmail.com'
+                }
+                failure {
+                    emailext subject: "Job '${env.JOB_NAME}' '${env.BUILD_NUMBER}' ",
+                        body: "<p>Build failed at '${env.BUILD_URL}'</p>",
+                        to: 'rafa.rutsatz@gmail.com'
+                }
+            }
         }
-
-//             post {
-//                 failure {
-//                     emailext subject: "Job '${env.JOB_NAME}' '${env.BUILD_NUMBER }' ",
-//                         body: "<p>Build failed at '${env.BUILD_URL}'</p>",
-//                         to: 'rafa.rutsatz@gmail.com'
-//                 }
-//             }
-
     }
 }
