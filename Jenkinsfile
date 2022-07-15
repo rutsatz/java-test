@@ -40,13 +40,18 @@ pipeline {
             }
         }
         stage('Deploy to Dev') {
-            when { expression {params.branch == 'dev'}}
+            when {
+                expression {params.target_environment == 'dev'}
+            }
             steps {
                 sh "kubectl set image deployment/spring-app backend=rutsatz/javatest:${params.version}"
             }
         }
         stage('Deploy to Prod') {
-            when { expression {params.branch == 'prod'}}
+            when {
+                beforeInput true
+                expression {params.target_environment == 'prod'}
+            }
             input {
                 message "Deploy to prod?"
                 ok "Submit"
