@@ -12,7 +12,8 @@ public class TestController {
 
     @GetMapping
     public String hello() {
-        return "Hello! Time now is " + LocalTime.now();
+        return "<p>v11</p>" +
+                "Hello! Time now is " + LocalTime.now();
     }
 
 }
